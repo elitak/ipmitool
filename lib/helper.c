@@ -37,7 +37,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <signal.h>
-#include <helper.h>
+#include <ipmitool/helper.h>
 
 #include <string.h>
 
@@ -86,7 +86,7 @@ void printbuf(unsigned char * buf, int len, char * desc)
 	printf("\n");
 }
 
-const char * val2str(unsigned char val, const struct valstr *vs)
+const char * val2str(unsigned short val, const struct valstr *vs)
 {
 	static char un_str[16];
 	int i = 0;
@@ -115,18 +115,13 @@ void signal_handler(int sig, void * handler)
 	act.sa_flags = 0;
 
 	if (sigemptyset(&act.sa_mask) < 0) {
-		printf("SIGNAL[%s] unable to empty signal set\n",
-		       (char *)strsignal(sig));
+		psignal(sig, "unable to empty signal set");
 		return;
 	}
 
 	if (sigaction(sig, &act, NULL) < 0) {
-		printf("SIGNAL[%s] unable to register handler @ %p\n",
-		       (char *)strsignal(sig), (void *)handler);
+		psignal(sig, "unable to register handler");
 		return;
 	}
-
-	printf("SIGNAL[%s]: handler registered @ %p\n",
-	       (char *)strsignal(sig), (void *)handler);
 }
 
